@@ -1,0 +1,231 @@
+<mat-toolbar color="primary">
+  <span>SmartExpense</span>
+  <span class="spacer"></span>
+  <span class="user-name">Welcome, {{ userName }}!</span>
+  <button mat-icon-button (click)="goToChart()">
+    <mat-icon>pie_chart</mat-icon>
+  </button>
+  <button mat-icon-button (click)="logout()">
+    <mat-icon>logout</mat-icon>
+  </button>
+</mat-toolbar>
+
+<div class="dashboard-container">
+
+  <!-- Summary Cards -->
+  <div class="summary-cards">
+    <mat-card class="summary-card">
+      <mat-card-content>
+        <div class="summary-icon">
+          <mat-icon>account_balance_wallet</mat-icon>
+        </div>
+        <div class="summary-info">
+          <h3>Total Expenses</h3>
+          <p class="amount">₹{{ totalAmount }}</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <mat-card-content>
+        <div class="summary-icon">
+          <mat-icon>receipt_long</mat-icon>
+        </div>
+        <div class="summary-info">
+          <h3>Total Records</h3>
+          <p class="amount">{{ allExpenses.length }}</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="summary-card" *ngIf="budgetSet">
+      <mat-card-content>
+        <div class="summary-icon">
+          <mat-icon>savings</mat-icon>
+        </div>
+        <div class="summary-info">
+          <h3>Remaining ({{ getMonthName() }})</h3>
+          <p class="amount" [ngClass]="getBudgetStatus()">
+            ₹{{ getRemainingBudget() }}
+          </p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Monthly Budget Card -->
+  <mat-card class="budget-card">
+    <mat-card-content>
+      <p class="budget-title">Monthly Budget Tracker</p>
+
+      <!-- Month Year Selector -->
+      <div class="month-selector-row">
+        <mat-form-field appearance="outline" class="month-field">
+          <mat-label>Month</mat-label>
+          <mat-select [(ngModel)]="selectedMonth" (ngModelChange)="onMonthYearChange()">
+            <mat-option *ngFor="let m of months" [value]="m.value">
+              {{ m.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="year-field">
+          <mat-label>Year</mat-label>
+          <mat-select [(ngModel)]="selectedYear" (ngModelChange)="onMonthYearChange()">
+            <mat-option *ngFor="let y of years" [value]="y">
+              {{ y }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Budget Input -->
+      <div class="budget-row">
+        <mat-form-field appearance="outline" class="budget-field">
+          <mat-label>Set Budget for {{ getMonthName() }} {{ selectedYear }} (₹)</mat-label>
+          <input matInput type="number" [(ngModel)]="budgetInput" name="budget">
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="setBudget()" class="budget-btn">
+          Set Budget
+        </button>
+      </div>
+
+      <!-- Budget Progress -->
+      <div *ngIf="budgetSet" class="budget-progress">
+        <div class="budget-labels">
+          <span>₹{{ monthlyTotal }} spent in {{ getMonthName() }}</span>
+          <span>₹{{ monthlyBudget }} budget</span>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar"
+               [style.width.%]="getBudgetPercentage()"
+               [ngClass]="getBudgetStatus()">
+          </div>
+        </div>
+        <p class="budget-message" [ngClass]="getBudgetStatus()">
+          <span *ngIf="getBudgetStatus() === 'safe'">
+            ✅ Within budget for {{ getMonthName() }}! {{ getBudgetPercentage() }}% used.
+          </span>
+          <span *ngIf="getBudgetStatus() === 'warning'">
+            ⚠️ Warning! {{ getBudgetPercentage() }}% of {{ getMonthName() }} budget used!
+          </span>
+          <span *ngIf="getBudgetStatus() === 'exceeded'">
+            ❌ Budget exceeded for {{ getMonthName() }}! ₹{{ monthlyTotal - monthlyBudget }} over limit!
+          </span>
+        </p>
+      </div>
+
+      <p *ngIf="!budgetSet" class="no-budget-msg">
+        Set a budget for {{ getMonthName() }} {{ selectedYear }} to track your spending!
+      </p>
+    </mat-card-content>
+  </mat-card>
+
+<!-- AI Budget Advisor -->
+<mat-card class="ai-card">
+  <mat-card-content>
+    <div class="ai-header">
+      <div class="ai-title">
+        <mat-icon>psychology</mat-icon>
+        <span>AI Budget Advisor</span>
+      </div>
+      <button mat-raised-button color="accent" 
+              (click)="getAIAdvice()" 
+              [disabled]="isLoadingAdvice">
+        <mat-spinner diameter="20" *ngIf="isLoadingAdvice"></mat-spinner>
+        <mat-icon *ngIf="!isLoadingAdvice">auto_awesome</mat-icon>
+        {{ isLoadingAdvice ? 'Analyzing...' : 'Get AI Advice' }}
+      </button>
+    </div>
+
+    <div class="ai-advice" *ngIf="showAdvice">
+      <button mat-icon-button class="close-btn" (click)="closeAdvice()">
+        <mat-icon>close</mat-icon>
+      </button>
+      <p class="advice-text">{{ aiAdvice }}</p>
+    </div>
+
+    <p class="ai-hint" *ngIf="!showAdvice && !isLoadingAdvice">
+      Click "Get AI Advice" to get personalized budget advice for {{ getMonthName() }} {{ selectedYear }}!
+    </p>
+  </mat-card-content>
+</mat-card>
+
+  <!-- Add Button and Filter Row -->
+  <div class="toolbar-row">
+    <button mat-raised-button color="primary" (click)="goToAddExpense()">
+      <mat-icon>add</mat-icon> Add Expense
+    </button>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Filter by Category</mat-label>
+      <mat-select [(ngModel)]="selectedCategory" (ngModelChange)="onCategoryChange()">
+        <mat-option *ngFor="let cat of categories" [value]="cat">
+          {{ cat }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <!-- Expenses Table -->
+  <mat-card class="table-card">
+    <mat-card-header>
+      <mat-card-title>
+        My Expenses
+        <span class="filter-badge" *ngIf="selectedCategory !== 'All'">
+          — {{ selectedCategory }}
+        </span>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <table mat-table [dataSource]="filteredExpenses" class="expense-table">
+
+        <ng-container matColumnDef="title">
+          <th mat-header-cell *matHeaderCellDef>Title</th>
+          <td mat-cell *matCellDef="let e">{{ e.title }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="amount">
+          <th mat-header-cell *matHeaderCellDef>Amount</th>
+          <td mat-cell *matCellDef="let e">₹{{ e.amount }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="category">
+          <th mat-header-cell *matHeaderCellDef>Category</th>
+          <td mat-cell *matCellDef="let e">{{ e.category }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef>Date</th>
+          <td mat-cell *matCellDef="let e">{{ e.date }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let e">
+            <button mat-icon-button color="primary" (click)="editExpense(e)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteExpense(e.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="['title','amount','category','date','actions']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['title','amount','category','date','actions']"></tr>
+
+      </table>
+
+      <p *ngIf="filteredExpenses.length === 0" class="no-data">
+        <span *ngIf="selectedCategory !== 'All'">
+          No {{ selectedCategory }} expenses found!
+        </span>
+        <span *ngIf="selectedCategory === 'All'">
+          No expenses yet. Click Add Expense to get started!
+        </span>
+      </p>
+    </mat-card-content>
+  </mat-card>
+
+</div>

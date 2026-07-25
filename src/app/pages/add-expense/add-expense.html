@@ -1,0 +1,75 @@
+<mat-toolbar color="primary">
+  <button mat-icon-button (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span>{{ isEditMode ? 'Edit Expense' : 'Add Expense' }}</span>
+</mat-toolbar>
+
+<div class="add-expense-container">
+  <mat-card class="add-expense-card">
+    <mat-card-header>
+      <mat-card-title>{{ isEditMode ? 'Update Expense' : 'New Expense' }}</mat-card-title>
+      <mat-card-subtitle>Fill in the details below</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+
+      <!-- Row 1: Title and Amount -->
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Title</mat-label>
+          <input matInput type="text" [(ngModel)]="title" name="title"
+                 (blur)="suggestCategory()">
+          <mat-icon matSuffix>title</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Amount</mat-label>
+          <input matInput type="number" [(ngModel)]="amount" name="amount">
+          <mat-icon matSuffix>currency_rupee</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <!-- AI Suggestion -->
+      <div class="ai-suggestion" *ngIf="isLoadingAI">
+        <mat-spinner diameter="20"></mat-spinner>
+        <span>AI is suggesting category...</span>
+      </div>
+      <div class="ai-suggestion success" *ngIf="aiSuggestion && !isLoadingAI">
+        <mat-icon>auto_awesome</mat-icon>
+        <span>{{ aiSuggestion }}</span>
+      </div>
+
+      <!-- Row 2: Category and Date -->
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Category</mat-label>
+          <mat-select [(ngModel)]="category" name="category">
+            <mat-option *ngFor="let cat of categories" [value]="cat">
+              {{ cat }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Date</mat-label>
+          <input matInput type="date" [(ngModel)]="date" name="date">
+        </mat-form-field>
+      </div>
+
+      <!-- Row 3: Description full width -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description (optional)</mat-label>
+        <textarea matInput [(ngModel)]="description" name="description" rows="3"></textarea>
+      </mat-form-field>
+
+      <p class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+      <button mat-raised-button color="primary" (click)="onSubmit()" class="submit-btn">
+        <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+        {{ isEditMode ? 'Update Expense' : 'Add Expense' }}
+      </button>
+
+    </mat-card-content>
+  </mat-card>
+</div>

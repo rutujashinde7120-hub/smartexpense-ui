@@ -1,0 +1,90 @@
+<mat-toolbar color="primary">
+  <button mat-icon-button (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span>Spending Charts & Insights</span>
+  <span class="spacer"></span>
+  <span class="user-name">{{ userName }}</span>
+</mat-toolbar>
+
+<div class="chart-container">
+
+  <!-- Month Year Selector -->
+  <mat-card class="selector-card">
+    <mat-card-content>
+      <div class="selector-row">
+        <mat-form-field appearance="outline" class="month-field">
+          <mat-label>Month</mat-label>
+          <mat-select [(ngModel)]="selectedMonth" (ngModelChange)="onMonthYearChange()">
+            <mat-option *ngFor="let m of months" [value]="m.value">
+              {{ m.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="year-field">
+          <mat-label>Year</mat-label>
+          <mat-select [(ngModel)]="selectedYear" (ngModelChange)="onMonthYearChange()">
+            <mat-option *ngFor="let y of years" [value]="y">
+              {{ y }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="total-box">
+          <p class="total-label">Total Spent</p>
+          <p class="total-amount">₹{{ totalAmount }}</p>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Charts Row -->
+  <div class="charts-row">
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>Category Breakdown</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <canvas id="pieChart"></canvas>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>Amount by Category</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <canvas id="barChart"></canvas>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- AI Spending Insights -->
+  <mat-card class="insights-card">
+    <mat-card-content>
+      <div class="insights-header">
+        <div class="insights-title">
+          <mat-icon>insights</mat-icon>
+          <span>Spending Insights</span>
+        </div>
+        <button mat-raised-button color="accent"
+                (click)="generateInsights()"
+                [disabled]="isLoadingInsights">
+          <mat-spinner diameter="20" *ngIf="isLoadingInsights"></mat-spinner>
+          <mat-icon *ngIf="!isLoadingInsights">analytics</mat-icon>
+          {{ isLoadingInsights ? 'Analyzing...' : 'Generate Insights' }}
+        </button>
+      </div>
+
+      <div class="insights-content" *ngIf="showInsights">
+        <pre class="insights-text">{{ insights }}</pre>
+      </div>
+
+      <p class="insights-hint" *ngIf="!showInsights && !isLoadingInsights">
+        Click "Generate Insights" to see detailed analysis of your spending for {{ getMonthName() }} {{ selectedYear }}!
+      </p>
+    </mat-card-content>
+  </mat-card>
+
+</div>
