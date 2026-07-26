@@ -1,59 +1,44 @@
-# SmartexpenseUi
+# SmartExpense UI
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.14.
+Angular frontend for SmartExpense — Personal Finance Tracker.
 
-## Development server
+## Tech Stack
+- Angular 21
+- TypeScript
+- Angular Material
+- Chart.js
+- JWT Authentication
 
-To start a local development server, run:
+## Features
+- ✅ User Registration & Login with JWT
+- ✅ Add, Edit, Delete Expenses
+- ✅ Monthly Budget Tracking with Progress Bar
+- ✅ Category Filter
+- ✅ Spending Pie & Bar Charts
+- ✅ AI Smart Categorization
+- ✅ AI Budget Advisor
+- ✅ AI Spending Insights
 
+## How to Run
+1. Install dependencies:
+```bash
+npm install --legacy-peer-deps
+```
+2. Run Angular:
 ```bash
 ng serve
 ```
+3. Open browser at `http://localhost:4200`
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Pages
+| Page | URL | Description |
+|------|-----|-------------|
+| Login | /login | User login |
+| Register | /register | User registration |
+| Dashboard | /dashboard | Expense dashboard with budget tracker |
+| Add Expense | /add-expense | Add or edit expense with AI categorization |
+| Charts | /chart | Spending pie chart, bar chart and insights |
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## Backend
+This project requires the SmartExpense API (Spring Boot) to be running on port 8080.
+Backend repository: https://github.com/rutujashinde7120-hub/
