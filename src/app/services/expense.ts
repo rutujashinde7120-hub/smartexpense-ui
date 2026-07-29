@@ -8,7 +8,7 @@ import { AuthService } from './auth';
 })
 export class ExpenseService {
 
-  private baseUrl = '/api/expenses';
+  private baseUrl = 'https://YOUR-RENDER-URL.onrender.com/api/expenses';
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 

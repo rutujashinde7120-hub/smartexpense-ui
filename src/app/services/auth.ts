@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class AuthService {
 
-  private baseUrl = '/api/auth';
+  private baseUrl = 'https://smartexpense-api-0izd.onrender.com/api/auth';
 
   constructor(private http: HttpClient) {}
 
