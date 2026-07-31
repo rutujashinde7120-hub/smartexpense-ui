@@ -8,7 +8,8 @@ import { AuthService } from './auth';
 })
 export class ExpenseService {
 
-  private baseUrl = https://smartexpense-api-0izd.onrender.com
+  private baseUrl = 'https://smartexpense-api-0izd.onrender.com/api/expenses';
+  private aiUrl = 'https://smartexpense-api-0izd.onrender.com/api/ai';
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
@@ -42,7 +43,7 @@ export class ExpenseService {
   }
 
   getBudgetAdvice(data: any): Observable<any> {
-    return this.http.post('/api/ai/budget-advice', data, {
+    return this.http.post(`${this.aiUrl}/budget-advice`, data, {
       headers: this.getHeaders()
     });
   }

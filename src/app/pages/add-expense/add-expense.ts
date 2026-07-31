@@ -66,7 +66,7 @@ export class AddExpense implements OnInit {
     this.aiSuggestion = '';
 
     try {
-      const response = await fetch('/api/ai/suggest-category', {
+      const response = await fetch('https://smartexpense-api-0izd.onrender.com/api/ai/suggest-category', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
